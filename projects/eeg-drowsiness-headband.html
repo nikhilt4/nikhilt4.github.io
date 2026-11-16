@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drowsiness Headband · Nikhil Talwalkar</title>
+  <meta name="description" content="A wearable EEG headband that detects the onset of drowsiness on-device and sounds an alarm within 2 seconds. Custom PCB, ADS1299, STM32F412, firmware in C.">
+  <meta property="og:image" content="../assets/img/headband-board-test.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-family='Georgia' font-size='17' fill='white' text-anchor='middle'%3ENT%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/site.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Nikhil Talwalkar</a>
+    <ul>
+      <li><a href="../index.html#work">Work</a></li>
+      <li class="hide-sm"><a href="../index.html#experience">Experience</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+      <li><button class="theme-btn" type="button" aria-label="Toggle theme"></button></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <header class="p-head">
+    <div class="wrap">
+      <a class="back" href="../index.html#work">← All work</a>
+      <div class="eyebrow">Project 01 · Embedded hardware</div>
+      <h1>EEG Drowsiness Detection Headband</h1>
+      <p class="lede">Drowsy driving causes tens of thousands of crashes a year. We built a headband that reads brain activity from the forehead, detects the shift towards early sleep, and sounds an alarm before a microsleep becomes an accident. Everything runs on the device, with no phone or laptop in the loop.</p>
+      <dl class="facts">
+        <div><dt>When</dt><dd>Sep – Dec 2025</dd></div>
+        <div><dt>Course</dt><dd>ECE 445 Senior Design, UIUC</dd></div>
+        <div><dt>Team</dt><dd>With Senturran Elangovan</dd></div>
+        <div><dt>Recognition</dt><dd>Hall of Fame, Honorable Mention</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="wrap p-hero">
+    <figure>
+      <img src="../assets/img/headband-board-test.jpg" alt="The assembled headband board: Li-Po battery on the left, ADS1299 and STM32F412 top right, power stages under oscilloscope probes" style="max-height:560px">
+      <figcaption>The assembled board under test: Li-Po battery (left), ADS1299 front end and STM32F412 (top right), power stages being probed (centre).</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap p-body">
+
+    <section>
+      <div class="cols">
+        <div>
+          <div class="eyebrow">The brief</div>
+          <h2>Four requirements</h2>
+          <p>We started from four high-level requirements and designed every subsystem against them.</p>
+        </div>
+        <ul class="ticks">
+          <li><b>Capture EEG</b> in the 0.5–13 Hz band at 250 samples per second, clean enough to register drowsiness-related events.</li>
+          <li><b>Detect drowsiness in real time</b> on the device, with a low false-positive rate in user trials.</li>
+          <li><b>Alert within 2 seconds</b> of the onset of a drowsy window.</li>
+          <li><b>Be safe and wearable</b> for a full 8-hour shift on battery.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Architecture</div>
+      <h2>How it fits together</h2>
+      <p class="read">Four subsystems: power, analogue acquisition, an STM32 controller running the DSP, and a piezo buzzer. The STM32F412 has no Wi-Fi or Bluetooth. That was deliberate, because it keeps brain data on the device.</p>
+      <div class="flow">
+        <div class="lane">
+          <div class="lane-label">Power</div>
+          <div class="node power"><b>Li-Po battery</b><span>3.7 V · 3000 mAh</span></div>
+          <div class="node power"><b>BMS</b><span>over-voltage cut-off</span></div>
+          <div class="node power"><b>Boost → 5 V</b><span>analogue rail</span></div>
+          <div class="node power"><b>Buck → 3.3 V</b><span>digital rail</span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-label">Signal</div>
+          <div class="node"><b>Electrodes</b><span>3 on the forehead</span></div>
+          <div class="node"><b>ADS1299</b><span>RC filter + 24-bit ADC</span></div>
+          <div class="node hi"><b>STM32F412 · C</b><span>band power · threshold · decide</span></div>
+          <div class="node"><b>Buzzer</b><span>alarm</span></div>
+        </div>
+      </div>
+      <p class="muted read" style="font-size:.92rem">The ADS1299 connects over SPI, and its data-ready interrupt makes the firmware read each sample the moment it arrives. Its internal bias amplifier drives the inverted common-mode signal back into the body, which suppresses 60 Hz mains noise before it reaches the ADC.</p>
+    </section>
+
+    <section>
+      <div class="eyebrow">Detection</div>
+      <h2>Signal processing on a microcontroller</h2>
+      <div class="flow">
+        <div class="lane">
+          <div class="node"><b>Sample</b><span>250 /s</span></div>
+          <div class="node"><b>Window</b><span>256 samples, 50% overlap</span></div>
+          <div class="node"><b>Clean</b><span>remove DC, reject RMS outliers</span></div>
+          <div class="node hi"><b>Band power</b><span>θ 6 Hz + α 10 Hz</span></div>
+          <div class="node"><b>Compare</b><span>vs. user threshold</span></div>
+          <div class="node"><b>Decide</b><span>3 in a row → alarm</span></div>
+        </div>
+      </div>
+      <div class="cols">
+        <div>
+          <p>Every 128 samples (about half a second) the firmware processes a 256-sample window. It subtracts the DC offset and computes total power and RMS, then discards windows with very large RMS or very low power, which are usually motion artefacts or loose electrodes.</p>
+          <p>A full FFT would be overkill on a Cortex-M4, so band power at the theta (6 Hz) and alpha (10 Hz) frequencies comes from the <b>Goertzel algorithm</b>. Both bands rise during eye closure and early sleep.</p>
+        </div>
+        <div>
+          <div class="formula">score = (Pθ(6 Hz) + Pα(10 Hz)) / (P<sub>total</sub> + ε)</div>
+          <div class="formula">threshold = max(baseline + Δ, floor) &nbsp;·&nbsp; Δ ∈ [0.2, 0.4]</div>
+          <p class="muted" style="font-size:.9rem">The ε stops division by zero, and the floor guards against an unusually low baseline.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">The key decision</div>
+      <h2>Making it work for different people</h2>
+      <p class="read">Our first version compared everyone against one fixed threshold. It worked well for the person we tuned it on. But resting brain activity varies a lot between people, so other users got constant false alarms or none at all. We weighed three fixes:</p>
+      <div class="options">
+        <div><span class="tag">Option A</span><h3>Train a classifier</h3><p>Would need far more labelled drowsy recordings than we had.</p></div>
+        <div><span class="tag">Option B</span><h3>Better filtering</h3><p>Reduces noise, but doesn't fix real differences between people.</p></div>
+        <div class="pick"><span class="tag">Chosen</span><h3>Per-user calibration</h3><p>Needs no training data, is cheap to run, and every decision can be explained.</p></div>
+      </div>
+      <div class="cols">
+        <div>
+          <p>For the first 10 seconds of a session (2,500 samples) the wearer stays alert while the firmware averages their score into a personal baseline. The threshold is then set just above it.</p>
+          <p>To stop blinks and head movements setting off the alarm, a counter has to see <b>three drowsy windows in a row</b> before the buzzer fires, and a cooldown follows. With both in place, the alarm tracked drowsiness reliably across multiple users in our trials.</p>
+        </div>
+        <figure>
+          <img src="../assets/img/drowsiness-threshold-plot.jpg" alt="Line chart of one user's band-power ratio over time against their personal threshold, with drowsy windows marked" loading="lazy">
+          <figcaption>One user's session: band-power ratio (blue) against their personal threshold (orange). Dots mark windows flagged as drowsy.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Bring-up</div>
+      <h2>From first board to working device</h2>
+      <div class="cols">
+        <figure>
+          <img src="../assets/img/scope-rails.jpg" alt="Oscilloscope screen showing three flat voltage rails" loading="lazy">
+          <figcaption>Verifying the rails: from a 3.89 V battery, the regulators produced 5.08 V and 3.05 V.</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/img/headband-pcb-rev2.jpg" alt="KiCad layout of the revised headband PCB" loading="lazy">
+          <figcaption>The revised PCB layout in KiCad.</figcaption>
+        </figure>
+      </div>
+      <p class="read" style="margin-top:28px">To bring up the first board we probed each stage and traced faults back to the layout. The revision fixed three issues:</p>
+      <div class="gallery" style="--n:3">
+        <figure><img src="../assets/img/fix-regulator.jpg" alt="Close-up of corrected regulator footprint" loading="lazy"><figcaption>Corrected the regulator footprint.</figcaption></figure>
+        <figure><img src="../assets/img/fix-connector.jpg" alt="Close-up of connector pinout" loading="lazy"><figcaption>Fixed the connector pinout so ground can't touch the 3.3 V rail.</figcaption></figure>
+        <figure><img src="../assets/img/fix-inductor.jpg" alt="Close-up of enlarged inductor pads" loading="lazy"><figcaption>Enlarged the inductor pads for the converters.</figcaption></figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Results</div>
+      <h2>Measured performance</h2>
+      <div class="metrics">
+        <div><div class="v">250/s</div><div class="k">EEG sample rate, near-zero overruns</div></div>
+        <div><div class="v">3–8 ms</div><div class="k">Processing time per window</div></div>
+        <div><div class="v">&lt;2 s</div><div class="k">Drowsy onset to buzzer</div></div>
+        <div><div class="v">5.08 / 3.05 V</div><div class="k">Rails, measured on battery</div></div>
+        <div><div class="v">~7.5 h</div><div class="k">Battery life (estimate)</div></div>
+      </div>
+      <div class="table-scroll">
+        <table class="data">
+          <thead><tr><th>Measure</th><th>Result</th><th>How we measured it</th></tr></thead>
+          <tbody>
+            <tr><td>EEG sampling rate</td><td>250 /s</td><td>Firmware logs over SWV. The only dips came from debugger jitter while logging.</td></tr>
+            <tr><td>Processing time per window</td><td>3–8 ms</td><td>Timed on the STM32 for every window.</td></tr>
+            <tr><td>Alert response</td><td>&lt; 2 s</td><td>From the onset of a drowsy window to the buzzer.</td></tr>
+            <tr><td>Power rails</td><td>5.08 / 3.05 V</td><td>Oscilloscope, on battery. 5 V is within 1.6%; 3.3 V is 7.6% low but works fine.</td></tr>
+            <tr><td>Charge protection</td><td>4.185 V max</td><td>The BMS held the cell below 4.2 V with an 8 V supply.</td></tr>
+            <tr><td>Battery life</td><td>~7.5 h (est.)</td><td>Estimated from a 10-minute discharge (≈400 mA draw). Just short of 8 h because we used a 3000 mAh cell instead of the planned 3600 mAh to save cost and size.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="cols">
+        <div class="callout">
+          <h3>What I'd do differently</h3>
+          <p>Our "drowsy" labels came from volunteers closing their eyes and slowing their breathing, not from clinical sleep staging. The subject pool was also small and all aged 20–25. More electrodes would open up beta and gamma bands. The electronics box was too big to balance comfortably on the cap, so the next version should be smaller.</p>
+        </div>
+        <figure>
+          <img src="../assets/img/hall-of-fame.jpg" alt="Illinois ECE 445 Hall of Fame certificate: Grainger Senior Design Honorable Mention, Real Time EEG Drowsiness Detection Device" loading="lazy">
+          <figcaption>Recognised in the ECE 445 Hall of Fame with a Grainger Senior Design Honorable Mention.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Stack</div>
+      <ul class="chips">
+        <li>KiCad</li><li>Mixed-signal PCB</li><li>Hand assembly</li><li>TI ADS1299</li><li>STM32F412RGT6</li><li>STM32CubeIDE</li><li>C</li><li>SPI + EXTI interrupts</li><li>Goertzel DSP</li><li>SWV / ITM logging</li><li>Oscilloscope bring-up</li>
+      </ul>
+      <!-- TODO: add links once available, e.g. GitHub repo, full report PDF, demo video -->
+    </section>
+  </div>
+
+  <div class="wrap">
+    <nav class="pager">
+      <a href="fpga-space-invaders.html"><span>← Previous</span><b>FPGA Space Invaders</b></a>
+      <a class="next" href="motor-imagery-bci.html"><span>Next →</span><b>Real-Time Motor Imagery BCI</b></a>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Nikhil Talwalkar</span>
+    <a href="../index.html#contact">Get in touch</a>
+  </div>
+</footer>
+</body>
+</html>

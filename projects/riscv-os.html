@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RISC-V OS · Nikhil Talwalkar</title>
+  <meta name="description" content="A Unix V6-inspired RISC-V operating system in C with device drivers, a file system, kernel threads, virtual memory and user processes.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-family='Georgia' font-size='17' fill='white' text-anchor='middle'%3ENT%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/site.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Nikhil Talwalkar</a>
+    <ul>
+      <li><a href="../index.html#work">Work</a></li>
+      <li class="hide-sm"><a href="../index.html#experience">Experience</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+      <li><button class="theme-btn" type="button" aria-label="Toggle theme"></button></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <header class="p-head">
+    <div class="wrap">
+      <a class="back" href="../index.html#work">← All work</a>
+      <div class="eyebrow">Project 05 · Operating systems</div>
+      <h1>RISC-V Operating System</h1>
+      <p class="lede">The final project for my computer systems class: a Unix V6-inspired operating system for RISC-V, written in C. It boots, drives real (virtual) hardware, and runs multiple user-mode programs with memory protection.</p>
+      <dl class="facts"><div><dt>When</dt><dd>Jan – Apr 2025</dd></div><div><dt>Type</dt><dd>Course final project</dd></div><div><dt>Language</dt><dd>C · RISC-V</dd></div><div><dt>Inspired by</dt><dd>Unix V6</dd></div></dl>
+    </div>
+  </header>
+
+  <div class="wrap p-body" style="padding-top:8px">
+
+    <section>
+      <div class="eyebrow">What I built</div>
+      <h2>A kernel, bottom to top</h2>
+      <ul class="ticks read">
+        <li><b>Device drivers</b> for UART, the real-time clock and VirtIO block devices.</li>
+        <li>A <b>read/write file system</b> on top of the block driver.</li>
+        <li><b>Kernel threading</b>.</li>
+        <li><b>Virtual memory</b> with page-level protection between processes.</li>
+        <li><b>System calls and processes</b>, so multiple user-mode programs can run side by side.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="eyebrow">Architecture</div>
+      <h2>How it fits together</h2>
+      <div class="flow"><div class="lane"><div class="node"><b>Drivers</b><span>UART · RTC · VirtIO</span></div><div class="node"><b>File system</b><span>read / write</span></div><div class="node hi"><b>Threads</b><span>kernel threading</span></div><div class="node"><b>Virtual memory</b><span>page protection</span></div><div class="node"><b>Processes</b><span>syscalls · user mode</span></div></div></div>
+    </section>
+    <section>
+      <div class="eyebrow">Stack &amp; links</div>
+      <ul class="chips" style="margin-bottom:20px"><li>C</li><li>RISC-V</li><li>VirtIO</li><li>Virtual memory</li><li>Concurrency</li></ul>
+      <div class="todo-note">Coming soon: GitHub repo, screenshots and a short write-up of the design decisions. <!-- TODO: replace this note with links/figures --></div>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <nav class="pager">
+      <a href="ai-dev-tools.html"><span>← Previous</span><b>AI-Powered Developer Tools</b></a>
+      <a class="next" href="fpga-space-invaders.html"><span>Next →</span><b>FPGA Space Invaders</b></a>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Nikhil Talwalkar</span>
+    <a href="../index.html#contact">Get in touch</a>
+  </div>
+</footer>
+</body>
+</html>

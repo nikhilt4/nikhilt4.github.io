@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motor Imagery BCI · Nikhil Talwalkar</title>
+  <meta name="description" content="A real-time motor imagery brain–computer interface: a 4-layer EEG board with on-chip classification that turns imagined hand movements into game controls.">
+  <meta property="og:image" content="../assets/img/bci-session.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-family='Georgia' font-size='17' fill='white' text-anchor='middle'%3ENT%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/site.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Nikhil Talwalkar</a>
+    <ul>
+      <li><a href="../index.html#work">Work</a></li>
+      <li class="hide-sm"><a href="../index.html#experience">Experience</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+      <li><button class="theme-btn" type="button" aria-label="Toggle theme"></button></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <header class="p-head">
+    <div class="wrap">
+      <a class="back" href="../index.html#work">← All work</a>
+      <div class="eyebrow">Project 02 · Brain–computer interface</div>
+      <h1>Real-Time Motor Imagery BCI</h1>
+      <p class="lede">When you imagine moving one hand, the 8–12 Hz mu rhythm over the opposite side of the motor cortex weakens. This system reads that change from electrodes at C3, Cz and C4. It turns imagined left and right hand movements into controls for a lane-dodging game, with no physical movement at all.</p>
+      <dl class="facts">
+        <div><dt>When</dt><dd>Jan – May 2026</dd></div>
+        <div><dt>Course</dt><dd>ECE 395 Advanced Digital Projects</dd></div>
+        <div><dt>Team</dt><dd>With Senturran Elangovan</dd></div>
+        <div><dt>Builds on</dt><dd><a href="eeg-drowsiness-headband.html">Drowsiness headband</a></dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="wrap p-hero">
+    <div class="gallery" style="--n:2;margin-top:0">
+      <figure>
+        <img src="../assets/img/bci-session.jpg" alt="A recording session: electrode cap on a volunteer, ADS1299 board on the bench, live EEG on the laptop" style="aspect-ratio:3/4;object-fit:cover">
+      </figure>
+      <figure>
+        <img src="../assets/img/bci-lane-dodge.gif" alt="Animated Lane Dodge gameplay: a blue car switches lanes to dodge rows of red obstacles as the game speeds up" width="400" height="467" loading="lazy" style="aspect-ratio:3/4;object-fit:contain;background:#12131b">
+      </figure>
+    </div>
+    <p class="muted" style="font-size:.85rem;margin-top:10px">A recording session, with the electrode cap, the ADS1299 board (bottom right) and live data on screen, and Lane Dodge, the game the classifier controls, in play.</p>
+  </div>
+
+  <div class="wrap p-body">
+
+    <section>
+      <div class="cols">
+        <div>
+          <div class="eyebrow">Goal</div>
+          <h2>From headband to platform</h2>
+        </div>
+        <div>
+          <p>The headband proved we could capture and process EEG on a microcontroller. This project turns that into a more complete BCI platform. It has a smaller <b>4-layer board</b>, <b>USB-C charging</b>, a <b>Bluetooth-capable STM32WB55</b> and <b>classification on the chip</b>.</p>
+          <p>The output drives a five-lane obstacle-avoidance game in pygame, so you can see the brain–computer loop working.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Architecture</div>
+      <h2>How it fits together</h2>
+      <div class="flow">
+        <div class="lane">
+          <div class="lane-label">Power</div>
+          <div class="node power"><b>USB-C</b><span>sink, CC pull-downs</span></div>
+          <div class="node power"><b>TP4056</b><span>Li-Po charger</span></div>
+          <div class="node power"><b>DW01A</b><span>battery protection</span></div>
+          <div class="node power"><b>Li-Po</b><span>3.7 V</span></div>
+          <div class="node power"><b>Boost</b><span>5 V rail</span></div>
+          <div class="node power"><b>Buck</b><span>3.3 V rail</span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-label">Signal</div>
+          <div class="node"><b>Electrodes</b><span>C3 · Cz · C4</span></div>
+          <div class="node"><b>ADS1299</b><span>24-bit EEG front end</span></div>
+          <div class="node hi"><b>STM32WB55 · C</b><span>mu-band power · on-chip L/R</span></div>
+          <div class="node"><b>Python host</b><span>live plots · game</span></div>
+        </div>
+      </div>
+      <p class="muted read" style="font-size:.92rem">ADS1299 → STM32 over SPI. STM32 → host over DMA-driven UART at 460,800 baud.</p>
+    </section>
+
+    <section>
+      <div class="eyebrow">Hardware</div>
+      <h2>A 4-layer board for microvolt signals</h2>
+      <div class="cols">
+        <div>
+          <h3 style="margin-bottom:8px">Prototype first</h3>
+          <p>Before the final board we built two small ADS1299 prototype boards to compare electrode setups on volunteers. One used a <b>referential</b> montage, with all channels sharing one reference through SRB1. The other used a <b>sequential (bipolar)</b> montage, measuring each electrode against a nearby one.</p>
+          <p>With the shared reference, the signals came out almost all flat or saturated. The bipolar montage gave much clearer motor imagery responses, so the final board uses it.</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom:8px">Layout decisions</h3>
+          <ul class="ticks">
+            <li>Four layers, so microvolt EEG traces, fast digital lines and the 2.4 GHz radio all sit over a close ground reference.</li>
+            <li>Trace widths by job: 20–30 mil for power, 10 mil for signals, 6 mil to route out of the fine-pitch 68-pin VFQFPN microcontroller.</li>
+            <li>Bluetooth RF section laid out to ST's reference design, with the tiny MLPF-WB55 matching filter and a chip antenna.</li>
+            <li>Reflow assembly for the fine-pitch analogue, digital and RF parts.</li>
+            <li>Dry comb electrodes (OpenBCI-compatible), which made it quicker to set up repeated volunteer sessions.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="gallery" style="--n:4">
+        <figure><img src="../assets/img/sch-charger.jpg" alt="TP4056 USB-C charger schematic" loading="lazy"><figcaption>USB-C charger (TP4056)</figcaption></figure>
+        <figure><img src="../assets/img/sch-protection.jpg" alt="DW01A battery protection schematic" loading="lazy"><figcaption>Battery protection (DW01A)</figcaption></figure>
+        <figure><img src="../assets/img/sch-boost.jpg" alt="5 V boost converter schematic" loading="lazy"><figcaption>5 V boost</figcaption></figure>
+        <figure><img src="../assets/img/sch-buck.jpg" alt="3.3 V buck regulator schematic" loading="lazy"><figcaption>3.3 V regulator</figcaption></figure>
+      </div>
+      <figure style="max-width:560px;margin-top:24px">
+        <img src="../assets/img/bci-pcb-layout.jpg" alt="Final 4-layer KiCad layout" loading="lazy" style="background:#5b1a1a">
+        <figcaption>Final layout in KiCad (109.5 × 101.6 mm): microcontroller and RF top left, charging top right, ADS1299 and electrode inputs bottom right.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <div class="eyebrow">Firmware</div>
+      <h2>Classifying on the chip</h2>
+      <div class="flow">
+        <div class="lane">
+          <div class="node"><b>Interrupt</b><span>DRDY: new sample</span></div>
+          <div class="node"><b>SPI read</b><span>into ring buffers</span></div>
+          <div class="node hi"><b>Window</b><span>clean · 8–12 Hz · vs baseline</span></div>
+          <div class="node"><b>Decision</b><span>LEFT / RIGHT</span></div>
+          <div class="node"><b>DMA UART</b><span>to the game</span></div>
+        </div>
+      </div>
+      <div class="cols">
+        <div>
+          <p>The firmware is built around the ADS1299's data-ready interrupt. The interrupt only increments a counter, and the main loop services it, so a slow window never drops a sample. Every 256 samples it processes a window:</p>
+          <ul class="ticks">
+            <li>Remove DC offset and reject any window whose RMS crosses ~45 mV, which catches motion, jaw clenches and electrode pops.</li>
+            <li>Run Goertzel at five frequencies across 8–12 Hz per channel.</li>
+            <li>Average the first five windows into a resting baseline, then normalise each new window against it.</li>
+            <li>Classify from the direction ratio below and send a compact <code>BP,&lt;ratio&gt;,&lt;class&gt;</code> line.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="formula">ratio = (C4<sub>norm</sub> − C3<sub>norm</sub>) / (C3<sub>norm</sub> + C4<sub>norm</sub>)</div>
+          <p class="muted" style="font-size:.9rem">The ratio runs from −1 to +1. Positive means C4 is more suppressed (right-hand imagery); negative means left.</p>
+          <p>Results go out through a <b>16-slot circular DMA UART queue</b>, so sending data never stalls sampling. A <code>RECALIBRATE</code> command resets the baseline live, with no board reset.</p>
+        </div>
+      </div>
+
+      <div class="options" style="grid-template-columns:1fr 1fr">
+        <div>
+          <span class="tag">Build 1</span>
+          <h3>Training firmware</h3>
+          <p>Streams raw 24-bit samples at 250 SPS, with frame counters (to spot dropped samples) and trial markers, for data collection: <code>D,frame,ms,C3,Cz,C4</code>. Includes ADS1299 lead-off detection for checking electrode contact.</p>
+        </div>
+        <div class="pick">
+          <span class="tag">Build 2</span>
+          <h3>Real-time firmware</h3>
+          <p>Does all the processing on the chip and sends one result per window instead of 250 raw lines a second, so the host needs no DSP at all.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Host software</div>
+      <h2>Python tools around it</h2>
+      <div class="gallery" style="--n:3;margin-top:0">
+        <div class="panel"><h3>Diagnostics</h3><p class="muted" style="margin:6px 0 0;font-size:.92rem">Boot test for ADS1299 init, a 60 Hz noise test with shorted inputs, and a colour-coded electrode contact check using lead-off detection.</p></div>
+        <div class="panel"><h3>Collection</h3><p class="muted" style="margin:6px 0 0;font-size:.92rem">A live three-channel plot with signal-quality indicators, plus a guided recorder that runs 20 trials (prepare, cue, imagery, rest) to CSV.</p></div>
+        <div class="panel"><h3>Training &amp; play</h3><p class="muted" style="margin:6px 0 0;font-size:.92rem">Epoch extraction, CSP + LDA training with leave-subjects-out validation, a neurofeedback dashboard, and the lane game.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">The demo</div>
+      <h2>Lane Dodge</h2>
+      <p class="read">The game used in the live demo, written in Python with pygame. Imagine moving your left hand and the car moves one lane left; imagine your right and it moves right. The classifier pushes each left/right decision into the game's input queue, and a short cooldown between lane changes stops noisy EEG predictions from making the car jitter. Speed and obstacle frequency ramp up the longer you survive.</p>
+      <div class="gallery" style="--n:2;max-width:760px">
+        <figure>
+          <img src="../assets/img/bci-game-lane-dodge-fast.png" alt="Lane Dodge later in a run: score 20, speed 4.00, the car in the middle lane" width="400" height="467" loading="lazy" style="aspect-ratio:598/700;object-fit:contain;background:#12131b">
+          <figcaption>Later in a run: by a score of 20 the speed has climbed from 1.00 to 4.00. The cooldown readout sits at the bottom.</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/img/bci-game-calibration.png" alt="Lane Dodge calibration screen reading: Calibrating. Sit still. Hands in lap. Eyes open. Think of nothing. Do NOT imagine moving your hands yet." width="601" height="703" loading="lazy">
+          <figcaption>Calibration comes first: the player sits still while the firmware records a resting baseline to compare against.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="cols">
+        <div class="callout">
+          <span class="eyebrow" style="margin-bottom:12px">Stretch goal · not tested with live EEG</span>
+          <h3>Pong 1v1</h3>
+          <p>We planned a two-player version as a stretch goal, with each player's motor imagery moving their own paddle. The game itself works, but it never got a live EEG test. A head-to-head match would have needed a second full EEG rig, which there wasn't time to build. The left/right decisions also weren't yet reliable enough for a fair match, so we put our time into making Lane Dodge solid.</p>
+        </div>
+        <figure style="max-width:340px">
+          <img src="../assets/img/bci-game-pong.png" alt="Pong 1v1: a red paddle at the top, a blue paddle at the bottom, a ball in play and a score of 0 to 0" width="619" height="676" loading="lazy">
+          <figcaption>Pong 1v1: the game runs, but it was never played with live EEG.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Results &amp; honest limitations</div>
+      <h2>What worked and what didn't</h2>
+      <div class="options">
+        <div>
+          <span class="tag">Offline ML vs on-chip</span>
+          <h3>48% → pivot</h3>
+          <p>We recorded 15 volunteers and trained a CSP + LDA classifier, validated on users it had never seen. It reached 48%, around chance for two classes, because the dataset was small. The simpler on-chip band-power method was more promising live, so the final system uses it.</p>
+        </div>
+        <div>
+          <span class="tag">Debugging BLE</span>
+          <h3>Radio silence</h3>
+          <p>The board has a full Bluetooth RF section, but no device could detect it, even though the firmware and CubeMX setup checked out. The likely cause is too long a trace between the STM32WB55 and the chip antenna. The next revision would shorten and match that path; this version uses UART.</p>
+        </div>
+        <div>
+          <span class="tag">Limitations</span>
+          <h3>The scalp is the bottleneck</h3>
+          <p>Dry electrodes are sensitive to contact, and a little hair could flatten or saturate a channel. Three channels and a small subject pool also limit accuracy. More channels, active electrodes and more data are the clearest next steps.</p>
+        </div>
+      </div>
+      <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+        <div><div class="v">250 SPS</div><div class="k">Continuous 3-channel acquisition</div></div>
+        <div><div class="v">4 layers</div><div class="k">Mixed-signal + RF board</div></div>
+        <div><div class="v">15</div><div class="k">Volunteers recorded</div></div>
+        <div><div class="v">0</div><div class="k">Physical movement needed to play</div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="callout">
+        <h3>What's next</h3>
+        <p>This project ran into the same problem as the headband: every new wearer needs their own calibration. My Spring 2027 Independent Study at Imperial picks this up. It tests whether EEG foundation models, pretrained on thousands of hours of data, generalise to new subjects and datasets better than the classical decoders used here.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Stack</div>
+      <ul class="chips">
+        <li>KiCad 4-layer</li><li>RF layout</li><li>Reflow assembly</li><li>TI ADS1299</li><li>STM32WB55</li><li>TP4056 / DW01A</li><li>USB-C</li><li>C</li><li>SPI · EXTI · DMA UART</li><li>Goertzel DSP</li><li>Python</li><li>CSP + LDA</li><li>pygame</li><li>matplotlib</li>
+      </ul>
+      <!-- TODO: add links once available, e.g. GitHub repo, demo video of the lane game -->
+    </section>
+  </div>
+
+  <div class="wrap">
+    <nav class="pager">
+      <a href="eeg-drowsiness-headband.html"><span>← Previous</span><b>EEG Drowsiness Headband</b></a>
+      <a class="next" href="eeg-aio.html"><span>Next →</span><b>NeuroScope</b></a>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Nikhil Talwalkar</span>
+    <a href="../index.html#contact">Get in touch</a>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NeuroScope · Nikhil Talwalkar</title>
+  <meta name="description" content="NeuroScope (formerly EEG AIO): a full-stack EEG analysis platform that loads almost any recording or public dataset, compares 14 decoders with leakage-safe cross-validation, and replays recordings live.">
+  <meta property="og:image" content="../assets/img/nsc-landing.jpg">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ctext x='16' y='22' font-family='Georgia' font-size='17' fill='white' text-anchor='middle'%3ENT%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script src="../assets/site.js"></script>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Nikhil Talwalkar</a>
+    <ul>
+      <li><a href="../index.html#work">Work</a></li>
+      <li class="hide-sm"><a href="../index.html#experience">Experience</a></li>
+      <li><a href="../index.html#contact">Contact</a></li>
+      <li><button class="theme-btn" type="button" aria-label="Toggle theme"></button></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <header class="p-head">
+    <div class="wrap">
+      <a class="back" href="../index.html#work">← All work</a>
+      <div class="eyebrow">Project 03 · Full-stack · ML</div>
+      <h1>NeuroScope</h1>
+      <p class="lede">A web platform for EEG analysis. You upload a recording or pull a public dataset, and the backend works out what analysis the data supports. It runs a preprocessing pipeline taken from the dataset's published methods, then puts <b>14 decoders</b> head to head with leakage-safe cross-validation, on one subject or across a group. You can also replay a recording as a live, scrolling EEG trace.</p>
+      <dl class="facts">
+        <div><dt>When</dt><dd>Jun 2026 – present</dd></div>
+        <div><dt>Type</dt><dd>Personal project</dd></div>
+        <div><dt>Role</dt><dd>Solo, full stack</dd></div>
+        <div><dt>Earlier name</dt><dd>EEG AIO</dd></div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="wrap p-hero">
+    <figure>
+      <img src="../assets/img/nsc-landing.jpg" alt="The NeuroScope landing page: the product name over an animated electrode map and scrolling EEG traces" style="max-height:none;object-fit:contain;border:1px solid var(--line)">
+    </figure>
+  </div>
+
+  <div class="wrap p-body">
+
+    <section>
+      <div class="cols">
+        <div><div class="eyebrow">Why</div><h2>The tool I wished I'd had</h2></div>
+        <div>
+          <p>I built <a href="eeg-drowsiness-headband.html">two</a> <a href="motor-imagery-bci.html">EEG devices</a> before this, and both times I hit the same problems off the board. Every dataset came in a different format, I rebuilt every pipeline from scratch, and there was no easy way to compare classifiers fairly.</p>
+          <p>NeuroScope puts that whole workflow into one app. It also leads into my Spring 2027 Independent Study, which compares EEG foundation models against the same kinds of classical and compact decoders NeuroScope runs.</p>
+        </div>
+      </div>
+      <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+        <div><div class="v">14</div><div class="k">Decoders, compared side by side</div></div>
+        <div><div class="v">4</div><div class="k">Analysis modes: motor imagery, spectral, ERP, basic</div></div>
+        <div><div class="v">83.3%</div><div class="k">4-class motor imagery, BCI Competition IV 2a, subject 1</div></div>
+        <div><div class="v">89</div><div class="k">Automated tests, plus integration runs on real data</div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">The app</div>
+      <h2>Five steps, from file to results</h2>
+      <p class="read">A wizard goes from loading data to choosing an analysis, preprocessing, picking decoders and reading the results. A summary panel on the right keeps track of every choice. Every default is filled in from a published pipeline, and you can change any of them.</p>
+      <div class="gallery" style="--n:1">
+        <figure>
+          <img src="../assets/img/nsc-choose.jpg" alt="Step 2 of the wizard: four analysis cards, with ERP marked recommended for the ERP CORE flanker dataset" loading="lazy">
+          <figcaption>Step 2. The app has checked the data and recommends ERP for a flanker task. Motor imagery would need the C3 and C4 channels.</figcaption>
+        </figure>
+        <figure>
+          <img src="../assets/img/nsc-results.jpg" alt="The results page for BCI Competition IV 2a subject 1: accuracy tiles, decoder bars, a 4-class confusion matrix and alpha-band scalp maps" loading="lazy">
+          <figcaption>Results for BCI Competition IV 2a, subject 1, comparing CSP + SVM and CSP + LDA. Feet and tongue get confused with each other because both sit on the midline of the motor cortex. The scalp maps show the alpha power drop opposite each imagined hand.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Architecture</div>
+      <h2>How it fits together</h2>
+      <div class="flow">
+        <div class="lane">
+          <div class="lane-label">Pipeline</div>
+          <div class="node"><b>Ingest</b><span>upload · MNE · MOABB · braindecode</span></div>
+          <div class="node"><b>Detect</b><span>channels · montage · events</span></div>
+          <div class="node"><b>Preprocess</b><span>published dataset presets</span></div>
+          <div class="node hi"><b>Classify</b><span>14 models · CV inside the pipeline</span></div>
+          <div class="node"><b>Visualise</b><span>accuracy · confusion · PSD · topomaps</span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-label">Stack</div>
+          <div class="node"><b>React + Vite</b><span>wizard · canvas playback</span></div>
+          <div class="node"><b>FastAPI</b><span>REST · Server-Sent Events</span></div>
+          <div class="node"><b>Job runner</b><span>one process per job · cancel · timeout</span></div>
+          <div class="node"><b>MNE-Python</b><span>loading · filtering · epochs</span></div>
+          <div class="node"><b>scikit-learn · pyRiemann · PyTorch</b><span>models + cross-validation</span></div>
+        </div>
+      </div>
+      <div class="cols" style="margin-top:28px">
+        <div>
+          <h3 style="margin-bottom:8px">It reads the data first</h3>
+          <p>When a recording loads, a detector inspects its channels, montage and event markers. It then offers only the analysis modes the data can support. For example, CSP needs the motor channels C3 and C4, and an ERP analysis needs event markers.</p>
+          <p>Known public datasets get <b>preprocessing presets taken from their published pipelines</b>. Unknown uploads fall back to generic defaults for each mode. You can override every value, and the UI shows which values came from a preset.</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom:8px">Long work runs in its own process</h3>
+          <p>Downloads and training runs go to a background job in a separate process, and the page polls its progress ("Training riemann_ts (3 of 5)"). An early version ran them inside the web request. One stalled download could then lock up a server worker for good, ignoring Ctrl+C, because it was stuck in a C-level socket read.</p>
+          <p>A separate process can always be killed. Every job has a timeout and a Cancel button, and both stop the whole process tree. Sessions are small JSON records on disk, so they survive server restarts.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Models</div>
+      <h2>Three families, one fair comparison</h2>
+      <div class="options">
+        <div>
+          <span class="tag">Classical</span>
+          <h3>Features + 9 classifiers</h3>
+          <p>LDA, SVM, Random Forest, logistic regression, Extra Trees, gradient boosting, MLP, kNN and Naive Bayes. They run on CSP spatial filters, band power, ERP amplitudes or signal statistics, depending on the mode.</p>
+        </div>
+        <div>
+          <span class="tag">Riemannian geometry</span>
+          <h3>Covariance-based</h3>
+          <p>Tangent space, MDM, FgMDM and xDAWN pipelines from pyRiemann. They treat each trial's covariance matrix as a point on a curved manifold and classify it there, with no hand-made features.</p>
+        </div>
+        <div>
+          <span class="tag">Deep learning</span>
+          <h3>EEGNet</h3>
+          <p>The compact CNN from Lawhern et al., built with braindecode and trained on the GPU. With about 3,400 parameters, it's the kind of compact baseline that large EEG foundation models need to beat, which is the question behind my Independent Study.</p>
+        </div>
+      </div>
+      <ul class="ticks read">
+        <li><b>No leakage.</b> CSP and feature scaling sit inside a scikit-learn pipeline, so each cross-validation fold fits them on its own training trials only. Fitting CSP on the whole dataset first is a common mistake that inflates accuracy. A test checks that CSP is fitted on exactly the training-fold trials.</li>
+        <li><b>Out-of-fold predictions</b> for every trial. They give the per-fold scores and the confusion matrix from a single pass.</li>
+        <li><b>Failure isolation.</b> If one model crashes, it reports its error and the other 13 still finish.</li>
+      </ul>
+    </section>
+
+    <section>
+      <div class="eyebrow">Results</div>
+      <h2>Matching the published numbers</h2>
+      <p class="read">This run used BCI Competition IV 2a (BNCI2014_001), subject 1. There are four imagined movements (left hand, right hand, feet and tongue), so chance is 25%. It used 576 trials, 22 channels, 5-fold cross-validation and the default settings.</p>
+      <div class="table-scroll">
+        <table class="data">
+          <thead><tr><th>Classifier</th><th>Accuracy</th><th>Family</th></tr></thead>
+          <tbody>
+            <tr><td>Riemannian tangent space</td><td>83.3% ± 3.3</td><td class="muted">Riemannian</td></tr>
+            <tr><td>FgMDM</td><td>79.7% ± 3.0</td><td class="muted">Riemannian</td></tr>
+            <tr><td>xDAWN + tangent space</td><td>75.7% ± 4.9</td><td class="muted">Riemannian</td></tr>
+            <tr><td>MDM</td><td>74.1% ± 1.9</td><td class="muted">Riemannian</td></tr>
+            <tr><td>CSP + SVM</td><td>74.1% ± 3.0</td><td class="muted">Classical</td></tr>
+            <tr><td>CSP + LDA</td><td>73.4% ± 4.5</td><td class="muted">Classical</td></tr>
+            <tr><td>EEGNet</td><td>71.9% ± 4.6</td><td class="muted">Deep</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="read" style="margin-top:20px">This is the order the literature predicts at this sample size. Riemannian methods lead, CSP methods trail, and EEGNet has too little data to pull ahead.</p>
+    </section>
+
+    <section>
+      <div class="eyebrow">Beyond one subject</div>
+      <h2>Results vary a lot between people</h2>
+      <div class="cols">
+        <div>
+          <p>The same pipeline that gets 83% on subject 1 gets about 50% on subject 5. A single-subject number says little on its own, so NeuroScope can run a group of subjects in two ways:</p>
+          <ul class="ticks">
+            <li><b>Within-subject.</b> Each person is trained and tested on their own data, and the app reports the mean ± spread across the group. This is how most BCI papers report results.</li>
+            <li><b>Cross-subject.</b> Leave one subject out: train on everyone else, test on the person the model has never seen. It asks whether a BCI could work with no calibration. CSP is refit inside every fold, so the held-out person never leaks into training.</li>
+          </ul>
+          <p>Cross-subject accuracy drops much closer to chance, which is the known hard problem. Re-centering each person's covariance matrices before training (Zanini et al., 2018) is the standard fix, and it's next on the list.</p>
+        </div>
+        <figure>
+          <img src="../assets/img/nsc-multisubject.jpg" alt="Within-subject results across subjects 1, 4 and 5: a per-subject accuracy grid and decoder bars with spread" loading="lazy">
+          <figcaption>Subjects 1, 4 and 5, within-subject. Tangent space scores 83.3%, 70.1% and 49.5%, giving 67.7% ± 13.9. A pale column means every decoder struggles with that subject, which usually points to the person, not the method.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">ERP mode</div>
+      <h2>When 90% accuracy means nothing</h2>
+      <div class="cols">
+        <figure>
+          <img src="../assets/img/nsc-erp.jpg" alt="ERP results on ERP CORE flankers subject 1, ranked by balanced accuracy, with a note explaining the class imbalance" loading="lazy">
+          <figcaption>ERP CORE flanker task, subject 1: telling correct responses from errors using the error-related negativity.</figcaption>
+        </figure>
+        <div>
+          <p>ERP mode classifies the brain's voltage response after each event, such as the P300 or the error-related negativity. The features are the mean amplitude in 50 ms bins on each channel, read by shrinkage LDA, following Blankertz et al. (2011).</p>
+          <p>The flanker task taught me something. People rarely make mistakes, so 86.5% of trials are "correct". A model that never detects an error scores 86.5% accuracy. LDA's plain accuracy of 90.5% looks great but is barely above that.</p>
+          <p>When the classes are imbalanced, the app now switches to <b>balanced accuracy</b>: the average of each class's hit rate, where chance is 50% for two classes. It explains why on the page. On that measure LDA scores 78.2%, a real result and an honest one.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Playback</div>
+      <h2>Watching a recording play back</h2>
+      <div class="cols">
+        <div>
+          <p>Any continuous public recording can be replayed as a live, scrolling multi-channel trace, like an EEG monitor. Event markers (a cue, a sleep stage) appear as they happen. You can change the speed from 0.5× to 4×, the gain and the channels shown, and seek to any point.</p>
+          <p>The server streams frames over <b>Server-Sent Events</b>, 25 times a second and paced to the clock. The browser draws them on a canvas. When you seek, the server first sends the preceding 10 seconds in one burst, so the trace jumps straight to the new point instead of redrawing from an empty screen.</p>
+        </div>
+        <div>
+          <h3 style="margin-bottom:8px">Why replay first</h3>
+          <p>Live decoding on incoming data needs the same streaming path underneath. Building playback first on public recordings (an overnight Sleep-EDF night, PhysioNet motor imagery) gets the streaming right before uploads and real-time classification are added on top.</p>
+        </div>
+      </div>
+      <div class="gallery" style="--n:1">
+        <figure>
+          <img src="../assets/img/nsc-playback.jpg" alt="Sleep-EDF playback seven hours into the night: two scrolling EEG channels, a seek bar with sleep-stage markers, speed and gain controls, and an events legend" loading="lazy">
+          <figcaption>Replaying a Sleep-EDF night at real speed, about seven hours in. The coloured ticks above the seek bar are the scored sleep stages. Click anywhere on the bar to jump there.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Debugging</div>
+      <h2>Bugs worth writing down</h2>
+      <div class="options">
+        <div>
+          <span class="tag">Deep learning</span>
+          <h3>EEGNet stuck at chance</h3>
+          <p>The training loss sat at exactly ln 4. There were three causes. The learning rate I passed was stored but never reached the optimiser. The wrapper defaulted to SGD instead of the Adam the paper uses. And passing a model instance instead of the class let later folds inherit the first fold's trained weights.</p>
+        </div>
+        <div>
+          <span class="tag">Units</span>
+          <h3>Trees ignored every feature</h3>
+          <p>Random Forest and gradient boosting sat at chance on data where LDA did fine. EEG comes in volts, so signal statistics were around 10⁻⁶. scikit-learn's trees treat a feature whose range is below 10⁻⁷ as constant and never split on it. Converting to microvolts fixed it.</p>
+        </div>
+        <div>
+          <span class="tag">Data</span>
+          <h3>Two seconds off</h3>
+          <p>The same dataset scored 73% from one library and 49% from another. One placed its event markers at trial start, the other at the cue, two seconds later. So the second one's "2–6 s" window was really 4–8 s and mostly missed the imagery. I measured where the markers sit and corrected the window.</p>
+        </div>
+        <div>
+          <span class="tag">Dependencies</span>
+          <h3>A library broke DNS</h3>
+          <p>Downloads from several dataset hosts failed with name-resolution errors, even though <code>nslookup</code> worked. The culprit was the OpenNeuro client: it pulled in a fork of urllib3 that installs under the same name and replaces how it resolves hostnames. I removed it.</p>
+        </div>
+        <div>
+          <span class="tag">Upstream</span>
+          <h3>Downloads in the wrong place</h3>
+          <p>On Windows, MOABB cleans the full download path, drive letter included, so <code>C:\</code> becomes <code>C-\</code>. The path is no longer absolute, and datasets download into whatever directory the server started in. I traced it to a single function and reproduced it in a two-line script.</p>
+        </div>
+        <div>
+          <span class="tag">Concurrency</span>
+          <h3>A flaky test on Windows</h3>
+          <p>The job tests failed now and then with a half-written JSON file. The parent and child processes shared one temporary file name, and Windows refuses to replace a file another process has open. Now each writer uses its own temporary name and retries the swap.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Data in</div>
+      <h2>What it reads</h2>
+      <div class="cols">
+        <div>
+          <h3 style="margin-bottom:8px">Working</h3>
+          <ul class="ticks">
+            <li>EDF, BDF and GDF recordings</li>
+            <li>FIF files, raw or already epoched (epoched data skips preprocessing)</li>
+            <li>BIDS datasets, uploaded as a ZIP</li>
+            <li>Public datasets from MNE, MOABB and braindecode: BCI Competition IV 2a, PhysioNet motor imagery, Sleep-EDF, ERP CORE and more</li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="margin-bottom:8px">In progress</h3>
+          <ul class="ticks">
+            <li>BrainVision and CSV/TSV files (beta)</li>
+            <li>MATLAB <code>.mat</code> files: the backend works, but a variable picker is still needed</li>
+            <li>Playback for uploaded files</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="callout">
+        <h3>What's next</h3>
+        <p>A <b>public demo</b> people can try from this page. Then <b>cross-subject alignment</b>, to close the gap when testing on someone new, and <b>live decoding</b> on top of playback: the classifier labels the recording as it scrolls past, the way a real-time BCI would.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="eyebrow">Stack</div>
+      <ul class="chips" style="margin-bottom:20px">
+        <li>Python</li><li>FastAPI</li><li>Server-Sent Events</li><li>multiprocessing</li><li>MNE-Python</li><li>MNE-BIDS</li><li>MOABB</li><li>scikit-learn</li><li>pyRiemann</li><li>PyTorch</li><li>braindecode</li><li>EEGNet</li><li>pytest</li><li>React</li><li>Vite</li><li>Recharts</li><li>Canvas</li><li>matplotlib</li>
+      </ul>
+      <div class="todo-note">Coming soon: a live demo and a link to the repo.</div>
+    </section>
+  </div>
+
+  <div class="wrap">
+    <nav class="pager">
+      <a href="motor-imagery-bci.html"><span>← Previous</span><b>Real-Time Motor Imagery BCI</b></a>
+      <a class="next" href="ai-dev-tools.html"><span>Next →</span><b>AI-Powered Developer Tools</b></a>
+    </nav>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Nikhil Talwalkar</span>
+    <a href="../index.html#contact">Get in touch</a>
+  </div>
+</footer>
+</body>
+</html>
